@@ -37,7 +37,7 @@ Example Apache Superset dashboard built on top of dbt models.
 
 <img src="images/superset_dashboard.png" width="600">
 
-## dbt Model Lineage
+## dbt Model Document
 
 <img src="images/dbt_doc.png" width="900">
 
