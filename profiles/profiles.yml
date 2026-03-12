@@ -6,7 +6,7 @@ my_project:
   outputs:
     dev:
       type: postgres
-      host: localhost       # use localhost when running dbt from the host venv
+      host: postgres        # use localhost when running dbt from the host venv
       user: postgres
       password: postgres
       port: 5432
