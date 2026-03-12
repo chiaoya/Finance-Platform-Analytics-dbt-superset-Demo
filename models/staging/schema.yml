@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: stg_loans
+    description: "Cleaned loan staging model"
+    columns:
+      - name: id
+        description: "Loan identifier"
+        tests:
+          - not_null
+
+      - name: grade
+        description: "Credit grade"
+        tests:
+          - not_null
+
+      - name: loan_status
+        description: "Loan status"
+        tests:
+          - not_null

@@ -1,0 +1,16 @@
+name: finance_platform_analytics_demo
+version: '1.0'
+config-version: 2
+
+profile: my_project
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"

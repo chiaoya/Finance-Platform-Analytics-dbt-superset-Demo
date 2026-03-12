@@ -1,0 +1,36 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# dbt
+target/
+dbt_packages/
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Environment variables
+.env
+
+# Data
+data/raw/
+data/tmp/
+
+# Temp files
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Kaggle API
+kaggle.json

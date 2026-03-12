@@ -1,0 +1,15 @@
+# Sample dbt profiles.yml for local testing (DO NOT COMMIT real credentials)
+# Put this file at ./profiles/profiles.yml and customize the values.
+
+my_project:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost       # use localhost when running dbt from the host venv
+      user: postgres
+      password: postgres
+      port: 5432
+      dbname: finance_platform
+      schema: analytics     # change to the schema you want dbt to use
+      threads: 1

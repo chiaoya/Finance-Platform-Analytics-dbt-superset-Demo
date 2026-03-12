@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: lending_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: platform_demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../data:/data
+      - postgres_data:/var/lib/postgresql/data
+
+  dbt:
+    # Use the GitHub Container Registry image for dbt with the Postgres adapter
+    image: ghcr.io/dbt-labs/dbt-postgres:1.11.7
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /usr/app
+    # mount project root (compose file is in docker/ so use ../ to reach repo root)
+    volumes:
+      - ../:/usr/app
+      # mount data folder so dbt (or scripts) can read raw files if needed
+      - ../data:/data
+      - ./profiles:/root/.dbt
+    entrypoint: ["dbt"]
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

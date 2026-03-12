@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw loan data loaded from LendingClub sample CSV into PostgreSQL"
+    schema: raw
+    tables:
+      - name: lendingclub_loans
+        description: "Raw LendingClub loan records"
+        columns:
+          - name: id
+            description: "Loan identifier"
+          - name: loan_amnt
+            description: "Requested loan amount"
+          - name: grade
+            description: "Assigned credit grade"
+          - name: loan_status
+            description: "Final loan status"
