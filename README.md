@@ -190,11 +190,10 @@ Possible future extensions include:
 
 ## Author
 
-**Chiaoya Chang**
+### **Chiaoya Chang**
 
 Data Scientist / Analytics Engineer  
 Berlin, Germany  
 
 GitHub:  
 https://github.com/chiaoya
-EOF
