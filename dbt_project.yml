@@ -1,4 +1,4 @@
-name: finance_platform_analytics_demo
+name: finance_platform_analytics_dbt_superset_demo
 version: '1.0'
 config-version: 2
 
