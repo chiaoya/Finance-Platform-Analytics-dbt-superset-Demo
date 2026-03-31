@@ -2,11 +2,11 @@ version: 2
 
 sources:
   - name: raw
-    description: "Raw loan data loaded from LendingClub sample CSV into PostgreSQL"
+    description: "Raw LendingClub accepted and rejected data loaded into PostgreSQL"
     schema: raw
     tables:
       - name: lendingclub_loans
-        description: "Raw LendingClub loan records"
+        description: "Raw accepted LendingClub loan records"
         columns:
           - name: id
             description: "Loan identifier"
@@ -16,3 +16,14 @@ sources:
             description: "Assigned credit grade"
           - name: loan_status
             description: "Final loan status"
+      - name: lendingclub_rejected_loans
+        description: "Raw rejected LendingClub application records"
+        columns:
+          - name: amount_requested
+            description: "Requested loan amount on the rejected application"
+          - name: application_date
+            description: "Date the rejected application was submitted"
+          - name: risk_score
+            description: "Risk score assigned to the rejected application"
+          - name: state
+            description: "Applicant state"

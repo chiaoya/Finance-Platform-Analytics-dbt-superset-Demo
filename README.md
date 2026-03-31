@@ -2,11 +2,29 @@
 
 An end-to-end analytics engineering project demonstrating how financial platform data can be transformed into business insights using a modern data stack.
 
-This project showcases how raw platform data can be ingested, modeled, and analyzed to support business decision-making.
+This project showcases how raw lending data can be loaded into PostgreSQL, cleaned and standardized with dbt, processed into analytics-ready models, and explored through Apache Superset dashboards for further analysis.
 
 The pipeline follows a typical analytics workflow:
 
 **Raw Data → PostgreSQL → dbt Models → Apache Superset Dashboards**
+
+## Data Source
+
+The source data comes from the Kaggle Lending Club dataset:
+
+https://www.kaggle.com/datasets/wordsforthewise/lending-club/data?select=accepted_2007_to_2018Q4.csv.gz
+
+This project uses Lending Club accepted and rejected loan application data as the raw input for analytics engineering and BI reporting.
+
+## Project Purpose
+
+The goal of this project is to show a practical end-to-end analytics workflow:
+
+- load raw Lending Club data into PostgreSQL  
+- clean and standardize the source data in dbt staging models  
+- process the cleaned data into business-ready mart models  
+- set up Apache Superset dashboards on top of those models  
+- support further analysis of loan performance, risk, status distribution, and portfolio trends  
 
 ## Architecture
 
@@ -95,7 +113,7 @@ The staging layer cleans and standardizes raw source tables.
 Examples:
 
 - stg_loans  
-- stg_customers  
+- stg_rejected_loans  
 
 Responsibilities:
 
@@ -109,11 +127,38 @@ The mart layer contains business-ready datasets designed for analytics and repor
 
 Examples:
 
-- loan_performance  
-- approval_metrics  
-- platform_summary  
+- loan_status_summary  
+- loan_risk_summary  
+- portfolio_overview  
 
 These models power dashboards and analytical queries.
+
+## Workflow
+
+### 1. Load Raw Data
+
+The raw accepted and rejected Lending Club datasets are loaded into PostgreSQL so they can be queried, transformed, and visualized in one place.
+
+The loader script writes raw tables such as:
+
+- `raw.lendingclub_loans`  
+- `raw.lendingclub_rejected_loans`  
+
+### 2. Clean and Standardize Data
+
+dbt staging models clean the raw tables by selecting useful columns, standardizing names, and casting fields into consistent types for downstream use.
+
+### 3. Process Analytics Models
+
+dbt mart models aggregate and reshape the cleaned data into business-friendly tables that support reporting and analysis.
+
+### 4. Build Superset Dashboards
+
+Apache Superset connects to the transformed PostgreSQL tables so dashboards can be built for monitoring loan status, loan volume, pricing, and risk-related metrics.
+
+### 5. Perform Further Analysis
+
+Once the data is loaded, cleaned, and modeled, the project can support deeper analysis such as approval trends, rejected application patterns, portfolio summaries, and other lending insights.
 
 # Running the Project
 
@@ -131,7 +176,13 @@ cd docker
 docker compose up -d postgres  
 ```
 
-### 3. Run dbt transformations
+### 3. Load raw data into PostgreSQL
+
+```bash
+python3 scripts/load_loans.py  
+```
+
+### 4. Run dbt transformations
 
 ```bash
 docker compose run dbt debug  
@@ -139,7 +190,7 @@ docker compose run dbt run
 docker compose run dbt test  
 ```
 
-### 4. Launch Superset
+### 5. Launch Superset
 
 Superset connects to the PostgreSQL database to visualize analytics tables and metrics.
 

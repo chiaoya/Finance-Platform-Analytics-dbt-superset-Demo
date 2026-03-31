@@ -1,7 +1,8 @@
 # Sample dbt profiles.yml for local testing (DO NOT COMMIT real credentials)
 # Put this file at ./profiles/profiles.yml and customize the values.
+# This project is standardized on the single Postgres database `platform_demo`.
 
-my_project:
+platform_demo_project:
   target: dev
   outputs:
     dev:
@@ -10,6 +11,6 @@ my_project:
       user: postgres
       password: postgres
       port: 5432
-      dbname: finance_platform
+      dbname: platform_demo
       schema: analytics     # change to the schema you want dbt to use
       threads: 1

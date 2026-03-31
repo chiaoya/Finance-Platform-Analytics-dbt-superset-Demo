@@ -1,8 +1,8 @@
-name: finance_platform_analytics_dbt_superset_demo
+name: platform_demo_analytics_dbt_superset_demo
 version: '1.0'
 config-version: 2
 
-profile: my_project
+profile: platform_demo_project
 
 model-paths: ["models"]
 analysis-paths: ["analysis"]

@@ -18,3 +18,18 @@ models:
         description: "Loan status"
         tests:
           - not_null
+
+  - name: stg_rejected_loans
+    description: "Cleaned rejected application staging model"
+    columns:
+      - name: amount_requested
+        description: "Requested amount for the rejected application"
+      - name: application_date
+        description: "Rejected application submission date"
+        tests:
+          - not_null
+
+      - name: state
+        description: "Applicant state"
+        tests:
+          - not_null
