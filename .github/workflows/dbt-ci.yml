@@ -1,0 +1,68 @@
+name: dbt CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: platform_demo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d platform_demo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat <<'EOF' > ~/.dbt/profiles.yml
+          platform_demo_project:
+            target: ci
+            outputs:
+              ci:
+                type: postgres
+                host: localhost
+                user: postgres
+                password: postgres
+                port: 5432
+                dbname: platform_demo
+                schema: analytics
+                threads: 1
+          EOF
+
+      - name: Seed CI source tables
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d platform_demo -f sql/ci_init.sql
+
+      - name: Parse dbt project
+        run: dbt parse
+
+      - name: Build dbt models and tests
+        run: dbt build
+

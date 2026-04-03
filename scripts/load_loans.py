@@ -12,6 +12,10 @@ DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
 DB_PORT = os.getenv("POSTGRES_PORT", "5432")
 DB_SCHEMA = os.getenv("POSTGRES_SCHEMA", "raw")
 LOAD_MODE = os.getenv("LOAD_MODE", "append")
+ACCEPTED_LOAD_MODE = os.getenv("ACCEPTED_LOAD_MODE", LOAD_MODE)
+REJECTED_LOAD_MODE = os.getenv("REJECTED_LOAD_MODE", LOAD_MODE)
+LOAD_ACCEPTED = os.getenv("LOAD_ACCEPTED", "true").lower() == "true"
+LOAD_REJECTED = os.getenv("LOAD_REJECTED", "true").lower() == "true"
 
 ACCEPTED_CSV_PATH = os.getenv(
     "ACCEPTED_CSV_PATH", "data/raw/lendingclub/accepted_subset.csv"
@@ -60,7 +64,7 @@ def load_accepted_loans() -> None:
         "lendingclub_loans",
         engine,
         schema=DB_SCHEMA,
-        if_exists=LOAD_MODE,
+        if_exists=ACCEPTED_LOAD_MODE,
         index=False,
         chunksize=5000,
     )
@@ -99,7 +103,7 @@ def load_rejected_loans() -> None:
         "lendingclub_rejected_loans",
         engine,
         schema=DB_SCHEMA,
-        if_exists=LOAD_MODE,
+        if_exists=REJECTED_LOAD_MODE,
         index=False,
         chunksize=5000,
     )
@@ -107,10 +111,12 @@ def load_rejected_loans() -> None:
 
 if __name__ == "__main__":
     ensure_schema()
-    load_accepted_loans()
-    load_rejected_loans()
+    if LOAD_ACCEPTED:
+        load_accepted_loans()
+    if LOAD_REJECTED:
+        load_rejected_loans()
     print(
-        "Finished loading accepted loans into "
-        f"{DB_SCHEMA}.lendingclub_loans and rejected loans into "
+        "Finished loading configured datasets into "
+        f"{DB_SCHEMA}.lendingclub_loans and/or "
         f"{DB_SCHEMA}.lendingclub_rejected_loans"
     )

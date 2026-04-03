@@ -11,6 +11,8 @@ services:
     volumes:
       - ../data:/data
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - finance_platform_network
 
   dbt:
     platform: linux/amd64
@@ -24,6 +26,12 @@ services:
     entrypoint: ["dbt"]
     depends_on:
       - postgres
+    networks:
+      - finance_platform_network
 
 volumes:
   postgres_data:
+
+networks:
+  finance_platform_network:
+    name: finance_platform_network

@@ -51,9 +51,19 @@ The stack mirrors real-world analytics platforms used by modern data teams.
 
 ## Example Dashboard
 
-Example Apache Superset dashboard built on top of dbt models.
+Example Apache Superset dashboard views built on top of dbt models.
 
-<img src="images/superset_dashboard.png" width="600">
+### Dashboard View 1
+
+<img src="images/dashboard_img_1.png" width="900">
+
+### Dashboard View 2
+
+<img src="images/dashboard_img_2.png" width="900">
+
+### Dashboard View 3
+
+<img src="images/dashboard_img_3.png" width="900">
 
 ## dbt Model Document
 
@@ -160,6 +170,29 @@ Apache Superset connects to the transformed PostgreSQL tables so dashboards can 
 
 Once the data is loaded, cleaned, and modeled, the project can support deeper analysis such as approval trends, rejected application patterns, portfolio summaries, and other lending insights.
 
+## CI/CD
+
+This project includes a simple GitHub Actions setup for dbt-oriented CI/CD.
+
+- CI workflow: `.github/workflows/dbt-ci.yml`
+- Deploy workflow: `.github/workflows/dbt-deploy.yml`
+
+The CI workflow:
+
+- starts a temporary PostgreSQL service
+- loads a tiny smoke-test dataset from `sql/ci_init.sql`
+- runs `dbt parse`
+- runs `dbt build`
+
+The deploy workflow is a manual trigger that can run `dbt build` against a target PostgreSQL environment using repository secrets:
+
+- `DBT_HOST`
+- `DBT_USER`
+- `DBT_PASSWORD`
+- `DBT_PORT`
+- `DBT_DBNAME`
+- `DBT_SCHEMA`
+
 # Running the Project
 
 ### 1. Clone the repository
@@ -195,6 +228,8 @@ docker compose run dbt test
 Superset connects to the PostgreSQL database to visualize analytics tables and metrics.
 
 Dashboards can be built on top of dbt-generated marts.
+
+The Superset container bootstrap also imports a database connection automatically from a YAML-generated datasource bundle, so rebuilding the container will recreate the `platform_demo` database connection without manual UI setup.
 
 ## Example Analytics Questions
 

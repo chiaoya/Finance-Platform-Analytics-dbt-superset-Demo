@@ -1,0 +1,52 @@
+name: dbt Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DBT_HOST: ${{ secrets.DBT_HOST }}
+      DBT_USER: ${{ secrets.DBT_USER }}
+      DBT_PASSWORD: ${{ secrets.DBT_PASSWORD }}
+      DBT_PORT: ${{ secrets.DBT_PORT }}
+      DBT_DBNAME: ${{ secrets.DBT_DBNAME }}
+      DBT_SCHEMA: ${{ secrets.DBT_SCHEMA }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create deployment dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat <<'EOF' > ~/.dbt/profiles.yml
+          platform_demo_project:
+            target: deploy
+            outputs:
+              deploy:
+                type: postgres
+                host: "{{ env_var('DBT_HOST') }}"
+                user: "{{ env_var('DBT_USER') }}"
+                password: "{{ env_var('DBT_PASSWORD') }}"
+                port: "{{ env_var('DBT_PORT') | as_number }}"
+                dbname: "{{ env_var('DBT_DBNAME') }}"
+                schema: "{{ env_var('DBT_SCHEMA') }}"
+                threads: 1
+          EOF
+
+      - name: Validate dbt project
+        run: dbt parse
+
+      - name: Deploy dbt models
+        run: dbt build
+

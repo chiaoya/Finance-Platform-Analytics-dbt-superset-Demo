@@ -1,35 +1,115 @@
 version: 2
 
 models:
-  - name: stg_loans
-    description: "Cleaned loan staging model"
+  - name: stg_lendingclub_loans
+    description: "Staging model for approved LendingClub loans with cleaned names and typed columns."
     columns:
-      - name: id
-        description: "Loan identifier"
+      - name: loan_id
+        description: "Loan identifier."
         tests:
           - not_null
-
+          - unique
       - name: grade
-        description: "Credit grade"
+        description: "Assigned credit grade."
         tests:
           - not_null
-
+      - name: issue_date
+        description: "Month-level issue date parsed from the raw file."
+        tests:
+          - not_null
       - name: loan_status
-        description: "Loan status"
+        description: "Final status of the approved loan."
         tests:
           - not_null
 
-  - name: stg_rejected_loans
-    description: "Cleaned rejected application staging model"
+  - name: stg_lendingclub_rejected_loans
+    description: "Staging model for rejected LendingClub applications with cleaned names and typed columns."
     columns:
-      - name: amount_requested
-        description: "Requested amount for the rejected application"
       - name: application_date
-        description: "Rejected application submission date"
+        description: "Submission date parsed from the raw file."
+        tests:
+          - not_null
+      - name: state
+        description: "Applicant state."
         tests:
           - not_null
 
-      - name: state
-        description: "Applicant state"
+  - name: int_loans_enriched
+    description: "Approved loans with reusable business flags and analytic bands for downstream marts."
+    columns:
+      - name: loan_id
+        description: "Loan identifier."
         tests:
           - not_null
+          - unique
+      - name: is_default
+        description: "Default flag for charged off or defaulted loans."
+      - name: is_approved
+        description: "Always 1 for approved loans."
+
+  - name: int_applications_combined
+    description: "Application-level unified table across approved and rejected outcomes."
+    columns:
+      - name: application_id
+        description: "Synthetic unique identifier across approved and rejected applications."
+        tests:
+          - not_null
+          - unique
+      - name: is_approved
+        description: "1 when the application resulted in an approved loan."
+      - name: is_rejected
+        description: "1 when the application was rejected."
+      - name: application_outcome
+        description: "High-level application result used for simple approved vs rejected filtering."
+
+  - name: mart_loans_detail
+    description: "Primary Superset dataset at one row per approved loan for flexible slicing and chart aggregation."
+    columns:
+      - name: loan_id
+        description: "Loan identifier."
+        tests:
+          - not_null
+          - unique
+      - name: issue_month
+        description: "Month grain for time filters and trend charts."
+
+  - name: mart_applications_detail
+    description: "Primary Superset dataset at one row per application outcome for funnel and approval analysis."
+    columns:
+      - name: application_id
+        description: "Unique application identifier."
+        tests:
+          - not_null
+          - unique
+      - name: application_month
+        description: "Month grain for application funnel trends."
+      - name: application_outcome
+        description: "High-level application result used for dashboard filters."
+
+  - name: mart_applications_summary
+    description: "Fast aggregate dataset for KPI cards and simple trend charts filtered by grade and application outcome."
+    columns:
+      - name: application_month
+        description: "Month grain for trend filters."
+      - name: grade
+        description: "Grade bucket, with Unknown used for rejected applications without a grade."
+      - name: application_outcome
+        description: "Approved or Rejected."
+
+  - name: mart_applications_long
+    description: "Long-format application dataset for Superset charts that compare approved and rejected values by month and grade."
+    columns:
+      - name: grade
+        description: "Grade bucket, with Unknown used for rejected applications without a grade."
+      - name: application_month
+        description: "Month-level date column for trend filters."
+      - name: application_year
+        description: "Four-digit year extracted from application_month."
+      - name: application_month_num
+        description: "Two-digit month number extracted from application_month."
+      - name: application_year_month
+        description: "Year-month label in YYYY-MM format extracted from application_month."
+      - name: application_outcome
+        description: "Approved or Rejected."
+      - name: value
+        description: "Application count for the selected outcome."
